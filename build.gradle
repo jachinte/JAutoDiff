@@ -1,39 +1,34 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "6.1.0"
-    id "java"
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'java'
+    id 'maven-publish'
 }
 
+group = 'com.rigiresearch'
+version = '0.0.1-SNAPSHOT'
+
 allprojects {
-    apply plugin: 'java-library'
-    apply plugin: 'maven-publish'
-
-    group = 'com.rigiresearch'
-    version = '0.0.1-SNAPSHOT'
-
     repositories {
         jcenter()
         flatDir {
             dirs "$rootDir/libs"
         }
     }
+}
 
-    // Maven Publish Begin
-    task sourceJar(type: Jar) {
-        from sourceSets.main.allJava
-    }
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
 
-    // This publishes sources with our jars.
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                from components.java
-                artifact sourceJar {
-                    classifier "sources"
-                }
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourceJar {
+                classifier "sources"
             }
         }
     }
-    // Maven Publish End
 }
 
 dependencies {
