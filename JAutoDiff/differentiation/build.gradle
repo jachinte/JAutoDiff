@@ -1,0 +1,10 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    implementation name: "ia_math"
+
+    // Tests
+    testImplementation "junit:junit:4.13"
+}
