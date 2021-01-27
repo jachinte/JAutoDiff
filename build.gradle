@@ -1,39 +1,45 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
-    id 'java'
-    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '6.1.0' apply false
 }
 
-group = 'com.rigiresearch'
-version = '0.0.1-SNAPSHOT'
+subprojects { project ->
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
-allprojects {
+    group = 'com.rigiresearch'
+    version = '0.0.1-SNAPSHOT'
+
+    java {
+        withSourcesJar()
+    }
+
+    build.finalizedBy(shadowJar)
+
     repositories {
         jcenter()
         flatDir {
             dirs "$rootDir/libs"
         }
     }
-}
 
-task sourceJar(type: Jar) {
-    from sourceSets.main.allJava
-}
+    tasks.withType(GenerateModuleMetadata) {
+        enabled = false
+    }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifact sourceJar {
-                classifier "sources"
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                versionMapping {
+                    usage('java-api') {
+                        fromResolutionOf('runtimeClasspath')
+                    }
+                    usage('java-runtime') {
+                        fromResolutionResult()
+                    }
+                }
             }
         }
     }
 }
-
-dependencies {
-    implementation project(":differentiation")
-    implementation project(":parser")
-}
-
-build.finalizedBy(shadowJar)
